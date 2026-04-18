@@ -2,9 +2,11 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ImageNexus | Smart Upload Manager</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Professional image hosting service - Upload, store, and manage your images with direct links">
+    <meta name="robots" content="index, follow">
+    <title>ImageVault | Professional Image Hosting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -14,52 +16,113 @@
         }
 
         body {
-            background: #0b1120;
+            background: linear-gradient(135deg, #0a0c15 0%, #0f1119 100%);
             font-family: 'Inter', sans-serif;
-            color: #e2e8f0;
+            color: #eef5ff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated gradient orbs */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15), transparent 70%);
+            top: -250px;
+            left: -250px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1), transparent 70%);
+            bottom: -300px;
+            right: -300px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 1.5rem;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* header */
+        /* Glassmorphism header */
         .header {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1.2rem 2rem;
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         .logo h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            background: linear-gradient(135deg, #ffffff, #94a3f8);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
+            letter-spacing: -0.02em;
         }
 
         .logo p {
-            font-size: 0.8rem;
-            color: #64748b;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 0.1rem;
         }
 
-        .stats {
-            background: #0f172a;
-            padding: 0.5rem 1rem;
+        .stats-badge {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.5rem 1.2rem;
             border-radius: 2rem;
             font-size: 0.85rem;
-            border: 1px solid #1e293b;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* layout 2 kolom */
+        .stats-badge i {
+            color: #3b82f6;
+            margin-right: 0.4rem;
+        }
+
+        /* Dashboard grid */
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
@@ -70,91 +133,129 @@
             .dashboard {
                 grid-template-columns: 1fr;
             }
+            .app-wrapper {
+                padding: 1rem;
+            }
         }
 
-        /* card style */
+        /* Cards */
         .card {
-            background: #0f172a;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
             border-radius: 1.5rem;
-            padding: 1.5rem;
-            border: 1px solid #1e293b;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
-        .card-title {
-            font-size: 1.2rem;
+        .card-header {
+            padding: 1.3rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             font-weight: 600;
-            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            color: #cbd5e1;
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        /* upload area */
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Upload zone */
         .upload-zone {
-            background: #0a0f1a;
-            border: 2px dashed #334155;
-            border-radius: 1rem;
-            padding: 2rem;
+            background: rgba(5, 10, 25, 0.5);
+            border: 2px dashed rgba(59, 130, 246, 0.4);
+            border-radius: 1.2rem;
+            padding: 2rem 1.5rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s;
             margin-bottom: 1.2rem;
         }
 
         .upload-zone:hover {
             border-color: #3b82f6;
-            background: #111827;
+            background: rgba(59, 130, 246, 0.05);
+            transform: translateY(-2px);
         }
 
-        .upload-zone.drag {
+        .upload-zone.drag-over {
             border-color: #60a5fa;
-            background: #1e293b;
+            background: rgba(96, 165, 250, 0.1);
+            transform: scale(0.98);
         }
 
         .upload-icon {
-            font-size: 2.5rem;
-            color: #3b82f6;
+            font-size: 3rem;
+            color: #60a5fa;
             margin-bottom: 0.8rem;
         }
 
+        .upload-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .upload-hint {
+            font-size: 0.7rem;
+            color: #7e8aa8;
+        }
+
+        /* Preview */
         .preview-area {
-            margin-top: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
             display: none;
         }
 
         .preview-img {
             max-width: 100%;
-            max-height: 200px;
-            border-radius: 0.75rem;
+            max-height: 220px;
+            border-radius: 0.8rem;
+            display: block;
+            margin: 0 auto;
             object-fit: contain;
-            background: #020617;
         }
 
+        .preview-info {
+            font-size: 0.7rem;
+            color: #a5b4d0;
+            text-align: center;
+            margin-top: 0.6rem;
+            word-break: break-all;
+        }
+
+        /* Buttons */
         .btn {
             width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.75rem;
+            padding: 0.8rem;
+            border-radius: 0.8rem;
             font-weight: 600;
+            font-family: 'Inter', sans-serif;
             border: none;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
             transition: all 0.2s;
-            margin-top: 1rem;
+            font-size: 0.9rem;
         }
 
         .btn-primary {
-            background: #2563eb;
+            background: linear-gradient(95deg, #2563eb, #4f46e5);
             color: white;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
         }
 
         .btn-primary:hover:not(:disabled) {
-            background: #3b82f6;
+            transform: translateY(-1px);
+            filter: brightness(1.05);
         }
 
         .btn-primary:disabled {
@@ -163,41 +264,65 @@
         }
 
         .btn-secondary {
-            background: #1e293b;
+            background: rgba(30, 41, 59, 0.8);
             color: #cbd5e1;
-            border: 1px solid #334155;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 0.7rem;
         }
 
         .btn-secondary:hover {
             background: #334155;
         }
 
+        /* Result box */
         .result-box {
-            background: #020617;
-            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.8rem;
             padding: 0.8rem;
             margin-top: 1rem;
             display: none;
             word-break: break-all;
-            font-size: 0.8rem;
+            border-left: 3px solid #10b981;
         }
 
-        /* history table */
+        .result-link {
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: #86efac;
+            margin: 0.5rem 0;
+        }
+
+        .copy-result-btn {
+            background: #1e293b;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        /* History list */
         .history-list {
             max-height: 500px;
             overflow-y: auto;
         }
 
         .history-item {
-            background: #0a0f1a;
-            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.8rem;
             padding: 0.8rem;
             margin-bottom: 0.7rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 0.8rem;
-            border-left: 3px solid #3b82f6;
+            border-left: 2px solid #3b82f6;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            background: rgba(30, 41, 59, 0.5);
         }
 
         .history-info {
@@ -224,11 +349,12 @@
         .history-date {
             font-size: 0.6rem;
             color: #5b6e8c;
+            margin-top: 0.2rem;
         }
 
         .history-actions {
             display: flex;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
 
         .icon-btn {
@@ -236,194 +362,257 @@
             border: none;
             color: #94a3b8;
             cursor: pointer;
-            padding: 0.3rem;
-            border-radius: 0.4rem;
+            padding: 0.4rem;
+            border-radius: 0.5rem;
             transition: all 0.2s;
+            font-size: 0.9rem;
         }
 
         .icon-btn:hover {
             color: #60a5fa;
-            background: #1e293b;
+            background: rgba(96, 165, 250, 0.2);
         }
 
+        .icon-btn.delete:hover {
+            color: #ef4444;
+        }
+
+        /* Empty state */
+        .empty-history {
+            text-align: center;
+            color: #5b6e8c;
+            padding: 2rem;
+        }
+
+        /* Toast notification */
         .toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 24px;
+            right: 24px;
             background: #1e293b;
+            backdrop-filter: blur(8px);
             padding: 0.7rem 1.2rem;
             border-radius: 2rem;
             font-size: 0.8rem;
             border-left: 3px solid #10b981;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             opacity: 0;
-            transition: opacity 0.2s;
+            transition: opacity 0.25s;
             pointer-events: none;
             z-index: 1000;
+            font-weight: 500;
         }
 
         .spinner {
             width: 16px;
             height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-top-color: white;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
+            display: inline-block;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="app-wrapper">
     <div class="header">
         <div class="logo">
-            <h1><i class="fas fa-database"></i> ImageNexus</h1>
-            <p>upload • store • manage</p>
+            <div class="logo-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div>
+                <h1>ImageVault</h1>
+                <p>secure • instant • permanent</p>
+            </div>
         </div>
-        <div class="stats" id="statsCounter">
-            <i class="fas fa-history"></i> <span id="totalCount">0</span> uploads
+        <div class="stats-badge" id="statsBadge">
+            <i class="fas fa-database"></i> <span id="totalCount">0</span> uploads
         </div>
     </div>
 
     <div class="dashboard">
-        <!-- KIRI: Upload section -->
+        <!-- Left: Upload panel -->
         <div class="card">
-            <div class="card-title">
-                <i class="fas fa-cloud-upload-alt"></i> New upload
+            <div class="card-header">
+                <i class="fas fa-plus-circle"></i> New upload
             </div>
-            <div class="upload-zone" id="uploadZone">
-                <div class="upload-icon"><i class="fas fa-images"></i></div>
-                <div>Click or drag image here</div>
-                <small style="color:#64748b">JPEG, PNG, WEBP, GIF (max 16MB)</small>
-                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
-            </div>
-            <div class="preview-area" id="previewArea">
-                <img id="previewImg" class="preview-img" alt="preview">
-                <div style="font-size:0.7rem; margin-top:0.5rem" id="fileName"></div>
-            </div>
-            <button class="btn btn-primary" id="uploadBtn" disabled>
-                <i class="fas fa-arrow-up"></i> Generate link
-            </button>
-            <button class="btn btn-secondary" id="resetBtn" style="display:none">
-                <i class="fas fa-sync-alt"></i> New image
-            </button>
-            <div class="result-box" id="resultBox">
-                <i class="fas fa-link"></i> <span id="resultLink"></span>
-                <button id="copyLink" style="margin-top:8px; background:#1e293b; border:none; padding:4px 12px; border-radius:20px; color:white; cursor:pointer; font-size:0.7rem;"><i class="far fa-copy"></i> Copy</button>
+            <div class="card-body">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon"><i class="fas fa-images"></i></div>
+                    <div class="upload-title">Select or drop image</div>
+                    <div class="upload-hint">JPEG, PNG, WEBP, GIF · Max 16 MB</div>
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
+                </div>
+
+                <div class="preview-area" id="previewArea">
+                    <img id="previewImg" class="preview-img" alt="preview">
+                    <div class="preview-info" id="previewInfo"></div>
+                </div>
+
+                <button class="btn btn-primary" id="uploadBtn" disabled>
+                    <i class="fas fa-arrow-up"></i> Generate link
+                </button>
+                <button class="btn btn-secondary" id="resetBtn" style="display: none;">
+                    <i class="fas fa-sync-alt"></i> Clear & new
+                </button>
+
+                <div class="result-box" id="resultBox">
+                    <i class="fas fa-link"></i> <strong>Direct link:</strong>
+                    <div class="result-link" id="resultLink"></div>
+                    <button class="copy-result-btn" id="copyResultBtn"><i class="far fa-copy"></i> Copy URL</button>
+                </div>
             </div>
         </div>
 
-        <!-- KANAN: History database -->
+        <!-- Right: History panel -->
         <div class="card">
-            <div class="card-title">
-                <i class="fas fa-database"></i> Upload history
-                <button id="refreshHistory" style="margin-left:auto; background:#1e293b; border:none; padding:4px 10px; border-radius:20px; color:#94a3b8; cursor:pointer; font-size:0.7rem;"><i class="fas fa-sync-alt"></i></button>
+            <div class="card-header">
+                <i class="fas fa-history"></i> Upload history
+                <button id="refreshHistoryBtn" style="margin-left:auto; background:rgba(255,255,255,0.05); border:none; padding:4px 10px; border-radius:20px; color:#94a3b8; cursor:pointer; font-size:0.7rem;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
-            <div id="historyList" class="history-list">
-                <div style="text-align:center; color:#475569; padding:2rem;">Loading history...</div>
+            <div class="card-body" style="padding: 0;">
+                <div id="historyList" class="history-list" style="padding: 1rem;">
+                    <div class="empty-history"><i class="fas fa-spinner fa-pulse"></i> Loading history...</div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 <div id="toastMsg" class="toast"></div>
 
 <script>
-    // ========== CONFIG ==========
-    const API_BASE = ''; // kosong = relative ke server yg sama
-
+    // ============================================================
+    // ImageVault - Full Frontend with Vercel Backend Integration
+    // ============================================================
+    
+    // API endpoint (relative to same origin)
+    const API_BASE = '/api';
+    
     // DOM elements
     const uploadZone = document.getElementById('uploadZone');
     const fileInput = document.getElementById('fileInput');
     const previewArea = document.getElementById('previewArea');
     const previewImg = document.getElementById('previewImg');
-    const fileNameSpan = document.getElementById('fileName');
+    const previewInfo = document.getElementById('previewInfo');
     const uploadBtn = document.getElementById('uploadBtn');
     const resetBtn = document.getElementById('resetBtn');
     const resultBox = document.getElementById('resultBox');
-    const resultLinkSpan = document.getElementById('resultLink');
-    const copyLinkBtn = document.getElementById('copyLink');
+    const resultLink = document.getElementById('resultLink');
+    const copyResultBtn = document.getElementById('copyResultBtn');
     const historyContainer = document.getElementById('historyList');
     const totalCountSpan = document.getElementById('totalCount');
-    const refreshBtn = document.getElementById('refreshHistory');
-
+    const refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
+    
     let currentFile = null;
-
-    function showToast(msg, isError = false) {
+    
+    // Toast notification
+    function showToast(message, isError = false) {
         const toast = document.getElementById('toastMsg');
-        toast.textContent = msg;
-        toast.style.backgroundColor = isError ? '#7f1a1a' : '#0f172a';
+        toast.textContent = message;
         toast.style.borderLeftColor = isError ? '#ef4444' : '#10b981';
+        toast.style.backgroundColor = isError ? '#2d1a1a' : '#1e293b';
         toast.style.opacity = '1';
-        setTimeout(() => toast.style.opacity = '0', 2500);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+        }, 2800);
     }
-
+    
+    // Fetch upload history from backend
     async function fetchHistory() {
         try {
-            const res = await fetch('/api/history');
-            const data = await res.json();
+            const response = await fetch(`${API_BASE}/history`);
+            const data = await response.json();
             if (data.success) {
                 renderHistory(data.data);
                 totalCountSpan.innerText = data.data.length;
+            } else {
+                throw new Error(data.error || 'Failed to load');
             }
         } catch (err) {
             console.error(err);
-            historyContainer.innerHTML = '<div style="text-align:center; color:#ef4444;">Failed to load history</div>';
+            historyContainer.innerHTML = '<div class="empty-history"><i class="fas fa-exclamation-triangle"></i> Cannot load history</div>';
+            showToast('Failed to load history', true);
         }
     }
-
+    
+    // Render history list
     function renderHistory(uploads) {
-        if (!uploads.length) {
-            historyContainer.innerHTML = '<div style="text-align:center; color:#475569; padding:2rem;"><i class="fas fa-inbox"></i> No uploads yet</div>';
+        if (!uploads || uploads.length === 0) {
+            historyContainer.innerHTML = '<div class="empty-history"><i class="fas fa-inbox"></i> No uploads yet</div>';
             return;
         }
+        
         historyContainer.innerHTML = uploads.map(item => `
             <div class="history-item" data-id="${item.id}">
                 <div class="history-info">
                     <div class="history-name"><i class="far fa-file-image"></i> ${escapeHtml(item.original_name || 'image')}</div>
-                    <div class="history-url" title="${item.image_url}">${truncate(item.image_url, 50)}</div>
-                    <div class="history-date">${new Date(item.created_at).toLocaleString()}</div>
+                    <div class="history-url" title="${item.image_url}">${truncateUrl(item.image_url, 55)}</div>
+                    <div class="history-date">${formatDate(item.created_at)}</div>
                 </div>
                 <div class="history-actions">
                     <button class="icon-btn copy-history" data-url="${item.image_url}" title="Copy link"><i class="far fa-copy"></i></button>
-                    <button class="icon-btn delete-history" data-id="${item.id}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    <button class="icon-btn delete delete-history" data-id="${item.id}" title="Delete record"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>
         `).join('');
-
-        // attach event listeners
+        
+        // Attach copy events
         document.querySelectorAll('.copy-history').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const url = btn.getAttribute('data-url');
-                navigator.clipboard.writeText(url);
-                showToast('Link copied!');
+                if (url) {
+                    navigator.clipboard.writeText(url);
+                    showToast('Link copied to clipboard');
+                }
             });
         });
+        
+        // Attach delete events
         document.querySelectorAll('.delete-history').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const id = btn.getAttribute('data-id');
-                if (confirm('Delete this record?')) {
-                    const res = await fetch(`/api/history/${id}`, { method: 'DELETE' });
-                    const data = await res.json();
-                    if (data.success) {
-                        showToast('Deleted');
-                        fetchHistory();
-                    } else {
-                        showToast('Delete failed', true);
+                if (confirm('Delete this upload record?')) {
+                    try {
+                        const res = await fetch(`${API_BASE}/history/${id}`, { method: 'DELETE' });
+                        const data = await res.json();
+                        if (data.success) {
+                            showToast('Record deleted');
+                            fetchHistory();
+                        } else {
+                            showToast('Delete failed', true);
+                        }
+                    } catch (err) {
+                        showToast('Error deleting', true);
                     }
                 }
             });
         });
     }
-
-    function truncate(str, len) {
-        if (str.length <= len) return str;
-        return str.substring(0, len) + '...';
-    }
-
+    
+    // Helper functions
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
@@ -433,24 +622,39 @@
             return m;
         });
     }
-
-    // handle file select
+    
+    function truncateUrl(url, maxLen) {
+        if (!url) return '';
+        if (url.length <= maxLen) return url;
+        return url.substring(0, maxLen) + '...';
+    }
+    
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleString();
+    }
+    
+    // Handle file selection
     function handleFile(file) {
         if (!file) return;
-        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        if (!allowed.includes(file.type)) {
-            showToast('Unsupported format', true);
+        
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+            showToast('Format not supported. Use JPEG, PNG, WEBP, or GIF', true);
             return;
         }
+        
         if (file.size > 16 * 1024 * 1024) {
-            showToast('Max size 16MB', true);
+            showToast('File too large. Maximum 16MB', true);
             return;
         }
+        
         currentFile = file;
         const reader = new FileReader();
         reader.onload = (e) => {
             previewImg.src = e.target.result;
-            fileNameSpan.innerText = file.name;
+            previewInfo.innerHTML = `<i class="far fa-file"></i> ${escapeHtml(file.name)} · ${formatFileSize(file.size)}`;
             previewArea.style.display = 'block';
             uploadBtn.disabled = false;
             resetBtn.style.display = 'block';
@@ -458,72 +662,114 @@
         };
         reader.readAsDataURL(file);
     }
-
-    // upload action
+    
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    // Upload file to backend
+    async function uploadImage(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const response = await fetch(`${API_BASE}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Upload failed');
+        }
+        
+        return await response.json();
+    }
+    
+    // Upload button handler
     uploadBtn.addEventListener('click', async () => {
-        if (!currentFile) return;
+        if (!currentFile) {
+            showToast('No image selected', true);
+            return;
+        }
+        
         uploadBtn.disabled = true;
         const originalHtml = uploadBtn.innerHTML;
         uploadBtn.innerHTML = '<span class="spinner"></span> Uploading...';
-        const formData = new FormData();
-        formData.append('image', currentFile);
+        
         try {
-            const res = await fetch('/api/upload', { method: 'POST', body: formData });
-            const data = await res.json();
-            if (data.success) {
-                resultLinkSpan.innerText = data.url;
+            const result = await uploadImage(currentFile);
+            if (result.success) {
+                resultLink.innerText = result.url;
                 resultBox.style.display = 'block';
-                showToast('Upload success!');
-                fetchHistory(); // refresh history
-                // reset after success? optional
+                showToast('Upload successful!');
+                fetchHistory(); // Refresh history after upload
+                // Optionally reset after success? Let user decide with reset button
             } else {
-                showToast(data.error || 'Upload failed', true);
+                throw new Error(result.error || 'Unknown error');
             }
         } catch (err) {
-            showToast('Network error', true);
+            console.error(err);
+            showToast(err.message || 'Upload failed. Check backend.', true);
+            resultBox.style.display = 'none';
         } finally {
             uploadBtn.innerHTML = originalHtml;
             uploadBtn.disabled = false;
         }
     });
-
+    
+    // Reset everything
     resetBtn.addEventListener('click', () => {
         currentFile = null;
         fileInput.value = '';
         previewArea.style.display = 'none';
         previewImg.src = '';
+        previewInfo.innerHTML = '';
         uploadBtn.disabled = true;
         resetBtn.style.display = 'none';
         resultBox.style.display = 'none';
-        showToast('Ready for new image');
+        showToast('Ready for new upload');
     });
-
-    copyLinkBtn.addEventListener('click', () => {
-        const url = resultLinkSpan.innerText;
+    
+    // Copy result link
+    copyResultBtn.addEventListener('click', () => {
+        const url = resultLink.innerText;
         if (url) {
             navigator.clipboard.writeText(url);
-            showToast('Link copied!');
+            showToast('Link copied');
         }
     });
-
-    // drag & drop
+    
+    // Drag & drop handlers
     uploadZone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) handleFile(e.target.files[0]);
+        if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
     });
+    
     uploadZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        uploadZone.classList.add('drag');
+        uploadZone.classList.add('drag-over');
     });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('drag-over');
+    });
     uploadZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        uploadZone.classList.remove('drag');
-        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+        uploadZone.classList.remove('drag-over');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFile(e.dataTransfer.files[0]);
+        }
     });
-
-    refreshBtn.addEventListener('click', () => fetchHistory());
+    
+    // Refresh history
+    refreshHistoryBtn.addEventListener('click', () => {
+        fetchHistory();
+        showToast('Refreshing history...');
+    });
+    
+    // Initial load
     fetchHistory();
 </script>
 </body>
-  </html>
+</html>
