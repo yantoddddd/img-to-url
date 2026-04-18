@@ -8,71 +8,57 @@ const upload = multer({ storage: multer.memoryStorage() });
 app.use(cors());
 app.use(express.json());
 
-const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
+// Catbox userhash lo
+const CATBOX_USERHASH = 'fb80838bd9d470c8b51046816';
 
+// Endpoint upload ke Catbox
 app.post('/api/upload', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'No image file' });
     }
 
-    const base64Image = req.file.buffer.toString('base64');
-    
+    // Validasi format
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(req.file.mimetype)) {
+      return res.status(400).json({ success: false, error: 'Format tidak didukung' });
+    }
+
+    // Siapkan FormData untuk Catbox
     const formData = new FormData();
-    formData.append('image', base64Image);
-    
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+    formData.append('reqtype', 'fileupload');
+    formData.append('userhash', CATBOX_USERHASH);
+    formData.append('fileToUpload', new Blob([req.file.buffer]), req.file.originalname);
+
+    const response = await fetch('https://catbox.moe/user/api.php', {
       method: 'POST',
       body: formData
     });
-    
-    const data = await response.json();
-    
-    if (!data.success) {
-      return res.status(400).json({ success: false, error: data.error?.message });
+
+    const result = await response.text();
+
+    if (result.startsWith('https://')) {
+      res.json({ success: true, url: result });
+    } else {
+      res.status(400).json({ success: false, error: result });
     }
-    
-    // Ambil direct link dari response ImgBB
-    let directUrl = data.data.url;
-    let displayUrl = data.data.display_url;
-    
-    // Bersihin URL (hapus duplikasi, dll)
-    if (directUrl.includes('i.ibb.co')) {
-      directUrl = directUrl.replace('i.ibb.co', 'i.ibb.co.com');
-    }
-    if (displayUrl.includes('ibb.co')) {
-      displayUrl = displayUrl.replace('ibb.co', 'ibb.co.com');
-    }
-    
-    // Pastikan URL pake https://
-    if (!directUrl.startsWith('https://')) {
-      directUrl = 'https://' + directUrl;
-    }
-    if (!displayUrl.startsWith('https://')) {
-      displayUrl = 'https://' + displayUrl;
-    }
-    
-    console.log('Direct URL:', directUrl);
-    console.log('Display URL:', displayUrl);
-    
-    res.json({ 
-      success: true, 
-      url: directUrl,
-      display_url: displayUrl
-    });
-    
+
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
-app.get('/api/history', async (req, res) => {
-  res.json({ success: true, data: [] });
+// History (temporary)
+let historyStore = [];
+app.get('/api/history', (req, res) => {
+  res.json({ success: true, data: historyStore });
 });
-
-app.delete('/api/history/:id', async (req, res) => {
-  res.json({ success: true });
+app.delete('/api/history/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const prevLength = historyStore.length;
+  historyStore = historyStore.filter(item => item.id !== id);
+  res.json({ success: true, deleted: prevLength - historyStore.length });
 });
 
 module.exports = app;
