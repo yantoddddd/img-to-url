@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageNexus | Smart Upload Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0b1120;
+            font-family: 'Inter', sans-serif;
+            color: #e2e8f0;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .stats {
+            background: #0f172a;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            border: 1px solid #1e293b;
+        }
+
+        /* layout 2 kolom */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 1.8rem;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* card style */
+        .card {
+            background: #0f172a;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #1e293b;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #cbd5e1;
+        }
+
+        /* upload area */
+        .upload-zone {
+            background: #0a0f1a;
+            border: 2px dashed #334155;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1.2rem;
+        }
+
+        .upload-zone:hover {
+            border-color: #3b82f6;
+            background: #111827;
+        }
+
+        .upload-zone.drag {
+            border-color: #60a5fa;
+            background: #1e293b;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: #3b82f6;
+            margin-bottom: 0.8rem;
+        }
+
+        .preview-area {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 0.75rem;
+            object-fit: contain;
+            background: #020617;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #3b82f6;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        .result-box {
+            background: #020617;
+            border-radius: 0.75rem;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            display: none;
+            word-break: break-all;
+            font-size: 0.8rem;
+        }
+
+        /* history table */
+        .history-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: #0a0f1a;
+            border-radius: 0.75rem;
+            padding: 0.8rem;
+            margin-bottom: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .history-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .history-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-url {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-date {
+            font-size: 0.6rem;
+            color: #5b6e8c;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            color: #60a5fa;
+            background: #1e293b;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e293b;
+            padding: 0.7rem 1.2rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            border-left: 3px solid #10b981;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="logo">
+            <h1><i class="fas fa-database"></i> ImageNexus</h1>
+            <p>upload • store • manage</p>
+        </div>
+        <div class="stats" id="statsCounter">
+            <i class="fas fa-history"></i> <span id="totalCount">0</span> uploads
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- KIRI: Upload section -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-cloud-upload-alt"></i> New upload
+            </div>
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon"><i class="fas fa-images"></i></div>
+                <div>Click or drag image here</div>
+                <small style="color:#64748b">JPEG, PNG, WEBP, GIF (max 16MB)</small>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none">
+            </div>
+            <div class="preview-area" id="previewArea">
+                <img id="previewImg" class="preview-img" alt="preview">
+                <div style="font-size:0.7rem; margin-top:0.5rem" id="fileName"></div>
+            </div>
+            <button class="btn btn-primary" id="uploadBtn" disabled>
+                <i class="fas fa-arrow-up"></i> Generate link
+            </button>
+            <button class="btn btn-secondary" id="resetBtn" style="display:none">
+                <i class="fas fa-sync-alt"></i> New image
+            </button>
+            <div class="result-box" id="resultBox">
+                <i class="fas fa-link"></i> <span id="resultLink"></span>
+                <button id="copyLink" style="margin-top:8px; background:#1e293b; border:none; padding:4px 12px; border-radius:20px; color:white; cursor:pointer; font-size:0.7rem;"><i class="far fa-copy"></i> Copy</button>
+            </div>
+        </div>
+
+        <!-- KANAN: History database -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-database"></i> Upload history
+                <button id="refreshHistory" style="margin-left:auto; background:#1e293b; border:none; padding:4px 10px; border-radius:20px; color:#94a3b8; cursor:pointer; font-size:0.7rem;"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <div id="historyList" class="history-list">
+                <div style="text-align:center; color:#475569; padding:2rem;">Loading history...</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+    // ========== CONFIG ==========
+    const API_BASE = ''; // kosong = relative ke server yg sama
+
+    // DOM elements
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewArea = document.getElementById('previewArea');
+    const previewImg = document.getElementById('previewImg');
+    const fileNameSpan = document.getElementById('fileName');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultBox = document.getElementById('resultBox');
+    const resultLinkSpan = document.getElementById('resultLink');
+    const copyLinkBtn = document.getElementById('copyLink');
+    const historyContainer = document.getElementById('historyList');
+    const totalCountSpan = document.getElementById('totalCount');
+    const refreshBtn = document.getElementById('refreshHistory');
+
+    let currentFile = null;
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toastMsg');
+        toast.textContent = msg;
+        toast.style.backgroundColor = isError ? '#7f1a1a' : '#0f172a';
+        toast.style.borderLeftColor = isError ? '#ef4444' : '#10b981';
+        toast.style.opacity = '1';
+        setTimeout(() => toast.style.opacity = '0', 2500);
+    }
+
+    async function fetchHistory() {
+        try {
+            const res = await fetch('/api/history');
+            const data = await res.json();
+            if (data.success) {
+                renderHistory(data.data);
+                totalCountSpan.innerText = data.data.length;
+            }
+        } catch (err) {
+            console.error(err);
+            historyContainer.innerHTML = '<div style="text-align:center; color:#ef4444;">Failed to load history</div>';
+        }
+    }
+
+    function renderHistory(uploads) {
+        if (!uploads.length) {
+            historyContainer.innerHTML = '<div style="text-align:center; color:#475569; padding:2rem;"><i class="fas fa-inbox"></i> No uploads yet</div>';
+            return;
+        }
+        historyContainer.innerHTML = uploads.map(item => `
+            <div class="history-item" data-id="${item.id}">
+                <div class="history-info">
+                    <div class="history-name"><i class="far fa-file-image"></i> ${escapeHtml(item.original_name || 'image')}</div>
+                    <div class="history-url" title="${item.image_url}">${truncate(item.image_url, 50)}</div>
+                    <div class="history-date">${new Date(item.created_at).toLocaleString()}</div>
+                </div>
+                <div class="history-actions">
+                    <button class="icon-btn copy-history" data-url="${item.image_url}" title="Copy link"><i class="far fa-copy"></i></button>
+                    <button class="icon-btn delete-history" data-id="${item.id}" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+        `).join('');
+
+        // attach event listeners
+        document.querySelectorAll('.copy-history').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const url = btn.getAttribute('data-url');
+                navigator.clipboard.writeText(url);
+                showToast('Link copied!');
+            });
+        });
+        document.querySelectorAll('.delete-history').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                if (confirm('Delete this record?')) {
+                    const res = await fetch(`/api/history/${id}`, { method: 'DELETE' });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Deleted');
+                        fetchHistory();
+                    } else {
+                        showToast('Delete failed', true);
+                    }
+                }
+            });
+        });
+    }
+
+    function truncate(str, len) {
+        if (str.length <= len) return str;
+        return str.substring(0, len) + '...';
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // handle file select
+    function handleFile(file) {
+        if (!file) return;
+        const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowed.includes(file.type)) {
+            showToast('Unsupported format', true);
+            return;
+        }
+        if (file.size > 16 * 1024 * 1024) {
+            showToast('Max size 16MB', true);
+            return;
+        }
+        currentFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            fileNameSpan.innerText = file.name;
+            previewArea.style.display = 'block';
+            uploadBtn.disabled = false;
+            resetBtn.style.display = 'block';
+            resultBox.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // upload action
+    uploadBtn.addEventListener('click', async () => {
+        if (!currentFile) return;
+        uploadBtn.disabled = true;
+        const originalHtml = uploadBtn.innerHTML;
+        uploadBtn.innerHTML = '<span class="spinner"></span> Uploading...';
+        const formData = new FormData();
+        formData.append('image', currentFile);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                resultLinkSpan.innerText = data.url;
+                resultBox.style.display = 'block';
+                showToast('Upload success!');
+                fetchHistory(); // refresh history
+                // reset after success? optional
+            } else {
+                showToast(data.error || 'Upload failed', true);
+            }
+        } catch (err) {
+            showToast('Network error', true);
+        } finally {
+            uploadBtn.innerHTML = originalHtml;
+            uploadBtn.disabled = false;
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        currentFile = null;
+        fileInput.value = '';
+        previewArea.style.display = 'none';
+        previewImg.src = '';
+        uploadBtn.disabled = true;
+        resetBtn.style.display = 'none';
+        resultBox.style.display = 'none';
+        showToast('Ready for new image');
+    });
+
+    copyLinkBtn.addEventListener('click', () => {
+        const url = resultLinkSpan.innerText;
+        if (url) {
+            navigator.clipboard.writeText(url);
+            showToast('Link copied!');
+        }
+    });
+
+    // drag & drop
+    uploadZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+    });
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('drag');
+    });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag');
+        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+
+    refreshBtn.addEventListener('click', () => fetchHistory());
+    fetchHistory();
+</script>
+</body>
+  </html>
